@@ -1,0 +1,13 @@
+streamlit 
+xarray 
+netCDF4 
+cdsapi 
+rasterio 
+numpy 
+geopandas 
+folium 
+streamlit-folium 
+shapely 
+matplotlib 
+requests
+h5netcdf
