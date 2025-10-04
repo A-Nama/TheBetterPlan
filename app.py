@@ -38,13 +38,14 @@ st.markdown("Click on a region to get urban planning recommendations based on po
 DATA_DIR = "data\copernicus"
 
 datasets = {
-    #"Population Density": os.path.join(DATA_DIR, "population_density.tif"),  # optional WorldPop
+    "Population Density (people/km²)": os.path.join(DATA_DIR, "jpn_popden_2019_1km.tif"),
     "Temperature (°C)": os.path.join(DATA_DIR, "2m_temperature_stream-enda_daily-mean.nc"),
     "Precipitation (mm)": os.path.join(DATA_DIR, "mean_total_precipitation_rate_2_daily-mean.nc"),
     "Vegetation (Leaf Area Index)": os.path.join(DATA_DIR, "leaf_area_index_high_vegetation_2_daily-mean.nc"),
     "Runoff Rate": os.path.join(DATA_DIR, "mean_surface_runoff_rate_2_daily-mean.nc"),
     "Low Veg LAI": os.path.join(DATA_DIR, "leaf_area_index_low_vegetation_2_daily-mean.nc"),
 }
+
 
 # -----------------------
 # Helper: load raster or netcdf dynamically
@@ -88,8 +89,12 @@ arr, bounds = load_data(raster_path)
 arr_masked = np.ma.masked_invalid(arr)
 
 # normalize for colormap
-vmin = np.nanpercentile(arr, 2)
-vmax = np.nanpercentile(arr, 98)
+if "Population Density" in selected_var:
+    vmin, vmax = 0, np.nanpercentile(arr, 99)
+else:
+    vmin = np.nanpercentile(arr, 2)
+    vmax = np.nanpercentile(arr, 98)
+
 norm = (arr_masked - vmin) / (vmax - vmin + 1e-9)
 norm = np.clip(norm, 0, 1)
 cmap = cm.get_cmap("inferno")
