@@ -12,3 +12,5 @@ matplotlib
 requests
 h5netcdf
 cdsapi
+google-generativeai
+python-dotenv

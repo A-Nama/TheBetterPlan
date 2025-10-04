@@ -7,6 +7,26 @@ import numpy as np
 import matplotlib.cm as cm
 import xarray as xr
 import os
+import google.generativeai as genai
+from dotenv import load_dotenv
+import os
+import streamlit as st
+import google.generativeai as genai
+
+load_dotenv()
+
+# Configure Gemini
+api_key = os.getenv("GOOGLE_API_KEY")
+
+if not api_key:
+    st.error("Google API key not found! Please check your .env file.")
+else:
+    genai.configure(api_key=api_key)
+
+model = genai.GenerativeModel("gemini-2.0-flash")
+
+
+
 
 st.set_page_config(layout="wide", page_title="The Better Plan 🌏")
 st.title("The Better Plan 🏙️")
@@ -174,3 +194,39 @@ if map_out and map_out.get("last_clicked"):
     st.write("**Interventions:**")
     for i, it in enumerate(interventions, 1):
         st.write(f"{i}. {it}")
+
+        # -----------------------
+    # Gemini-based conversational AI
+    # -----------------------
+    st.subheader("💬 Ask The Planner AI")
+
+    user_question = st.text_input(
+        "Ask a question about this location:",
+        placeholder="e.g. What sustainable strategies suit this region?"
+    )
+
+    if user_question:
+        # Give Gemini context from the datasets
+        context = "\n".join([f"{k}: {v}" for k, v in data_at_click.items()])
+
+        prompt = f"""
+        You are an expert urban planner and environmental advisor.
+        Here’s the environmental context for a selected location:
+
+        {context}
+
+        Labels identified: {labels}
+        Interventions suggested: {interventions}
+
+        The user asks: "{user_question}"
+
+        Please provide a practical, location-specific, and sustainability-focused answer.
+        Mention potential urban design ideas, green infrastructure, and adaptation measures.
+        """
+
+        with st.spinner("The Planner AI is thinking..."):
+            response = model.generate_content(prompt)
+
+        st.markdown("**AI Answer:**")
+        st.write(response.text)
+
