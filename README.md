@@ -30,6 +30,4 @@
 
 ---
 
-Made with ❤️ by **Team Hoshi**
-
-**Note:** Uses NASA datasets, making it eligible for global sustainability and innovation awards.  
+Made with ❤️ by **Team Hoshi** 
